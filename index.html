@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Professional Internship OS - Arnav Tiwari</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: #111;
+      }
+      .dark .dark-bg-primary {
+        background-color: #111;
+      }
+      .dark .dark-bg-secondary {
+        background-color: #1a1a1a;
+      }
+      .dark .dark-border-primary {
+        border-color: #2a2a2a;
+      }
+      .dark .dark-text-primary {
+        color: #f0f0f0;
+      }
+      .dark .dark-text-secondary {
+        color: #a0a0a0;
+      }
+      .dark .dark-hover-bg:hover {
+        background-color: #222;
+      }
+      .dark .dark-active-bg {
+        background-color: #252525;
+      }
+
+      .priority-high {
+        color: #ff6b6b;
+      }
+      .priority-medium {
+        color: #ffad60;
+      }
+      .priority-low {
+        color: #96e072;
+      }
+
+      .status-badge {
+        padding: 4px 12px;
+        border-radius: 9999px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .status-not-applied {
+        background-color: #4a5568;
+        color: white;
+      }
+      .status-applied {
+        background-color: #4299e1;
+        color: white;
+      }
+      .status-review {
+        background-color: #f6e05e;
+        color: #2d3748;
+      }
+      .status-interview {
+        background-color: #4fd1c5;
+        color: #1a202c;
+      }
+      .status-offer {
+        background-color: #68d391;
+        color: #1a202c;
+      }
+      .status-rejected {
+        background-color: #f56565;
+        color: white;
+      }
+
+      .main-layout {
+        height: calc(100vh - 100px);
+      }
+      .company-list {
+        max-height: 100%;
+        overflow-y: auto;
+      }
+      .details-view {
+        max-height: 100%;
+        overflow-y: auto;
+      }
+
+      .modal {
+        transition: opacity 0.3s ease;
+      }
+      .modal-content {
+        transition: transform 0.3s ease;
+      }
+
+      .accordion-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-in-out;
+      }
+    </style>
+  </head>
+  <body class="dark-bg-primary dark-text-primary">
+    <div class="max-w-screen-2xl mx-auto p-4 sm:p-6">
+      <!-- Header -->
+      <header
+        class="mb-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
+      >
+        <div class="flex items-center gap-4">
+          <div
+            class="w-12 h-12 bg-emerald-500 rounded-lg flex items-center justify-center text-black text-xl font-bold"
+          >
+            A
+          </div>
+          <div>
+            <h1 class="text-2xl font-bold">Internship OS</h1>
+            <p class="dark-text-secondary">
+              Arnav Tiwari • Application Cycle: Summer 2026
+            </p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <button
+            onclick="showAnalyticsModal()"
+            class="w-10 h-10 dark-text-secondary hover:text-white hover:bg-white/10 rounded-lg flex items-center justify-center transition-colors"
+          >
+            <i class="fas fa-chart-pie text-lg"></i>
+          </button>
+          <button
+            onclick="showProfileModal()"
+            class="w-10 h-10 dark-text-secondary hover:text-white hover:bg-white/10 rounded-lg flex items-center justify-center transition-colors"
+          >
+            <i class="fas fa-user text-lg"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- Main Content Layout -->
+      <div
+        class="main-layout grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+      >
+        <!-- Left Pane: Company List -->
+        <div
+          class="lg:col-span-1 xl:col-span-1 dark-bg-secondary border dark-border-primary rounded-xl flex flex-col"
+        >
+          <div class="p-4 border-b dark-border-primary flex-shrink-0 space-y-3">
+            <div class="flex items-center gap-2">
+              <div class="relative flex-grow">
+                <input
+                  type="text"
+                  id="searchInput"
+                  class="form-input w-full pl-9 text-sm bg-black/20 border-transparent focus:border-emerald-500 focus:ring-emerald-500 rounded-md"
+                  placeholder="Search companies..."
+                />
+                <i
+                  class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 dark-text-secondary"
+                ></i>
+              </div>
+              <button
+                onclick="document.getElementById('addCompanyModal').classList.remove('hidden')"
+                class="bg-emerald-500 hover:bg-emerald-600 text-black font-bold w-9 h-9 rounded-md flex-shrink-0 flex items-center justify-center transition-colors"
+              >
+                <i class="fas fa-plus"></i>
+              </button>
+            </div>
+            <div>
+              <select
+                id="industryFilter"
+                class="form-select w-full text-sm bg-black/20 border-transparent focus:border-emerald-500 focus:ring-emerald-500 rounded-md dark-text-secondary"
+              >
+                <option value="">All Industries</option>
+                <!-- Options will be injected by JS -->
+              </select>
+            </div>
+          </div>
+          <div id="company-list-container" class="company-list p-2">
+            <!-- Company list items will be injected here -->
+          </div>
+        </div>
+
+        <!-- Right Pane: Details View -->
+        <div
+          id="details-view-container"
+          class="lg:col-span-2 xl:col-span-3 dark-bg-secondary border dark-border-primary rounded-xl details-view p-6 sm:p-8"
+        >
+          <!-- Placeholder or selected company details will be injected here -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Modals -->
+    <div
+      id="profileModal"
+      class="modal fixed inset-0 bg-black/70 flex items-center justify-center z-50 hidden"
+      onclick="this.classList.add('hidden')"
+    ></div>
+    <div
+      id="addCompanyModal"
+      class="modal fixed inset-0 bg-black/70 flex items-center justify-center z-50 hidden"
+      onclick="this.classList.add('hidden')"
+    ></div>
+    <div
+      id="analyticsModal"
+      class="modal fixed inset-0 bg-black/70 flex items-center justify-center z-50 hidden"
+      onclick="this.classList.add('hidden')"
+    ></div>
+
+    <script>
+      // --- DATA ---
+      const initialCompanies = [
+        {
+          company: "Tesla (Gigafactory)",
+          category: "Battery & Energy Storage",
+          website: "https://www.tesla.com/careers",
+          notes: "Leading EV battery tech, 4680 cells, energy storage systems",
+        },
+        {
+          company: "Panasonic Energy",
+          category: "Battery & Energy Storage",
+          website: "https://na.panasonic.com/us/careers",
+          notes: "Tesla partner, cylindrical battery expertise",
+        },
+        {
+          company: "CATL",
+          category: "Battery & Energy Storage",
+          website: "https://www.catl.com/en/careers/",
+          notes: "World's largest battery manufacturer, LFP leader",
+        },
+        {
+          company: "BYD Company",
+          category: "Battery & Energy Storage",
+          website: "https://en.byd.com/careers/",
+          notes: "Blade battery technology, vertical integration",
+        },
+        {
+          company: "LG Energy Solution",
+          category: "Battery & Energy Storage",
+          website: "https://www.lgensol.com/en/career-LGES",
+          notes: "Major OEM supplier, NCM chemistry expertise",
+        },
+        {
+          company: "Samsung SDI",
+          category: "Battery & Energy Storage",
+          website: "https://www.samsungsdi.com/career/index.html",
+          notes: "Solid-state battery development, premium market",
+        },
+        {
+          company: "SK Innovation/SK On",
+          category: "Battery & Energy Storage",
+          website: "https://www.skon.com/eng/recruit/recruit.do",
+          notes: "Fast-charging NCM batteries, US expansion",
+        },
+        {
+          company: "QuantumScape",
+          category: "Battery & Energy Storage",
+          website: "https://www.quantumscape.com/careers/",
+          notes: "Solid-state battery pioneer, VW backing",
+        },
+        {
+          company: "Solid Power",
+          category: "Battery & Energy Storage",
+          website: "https://solidpowerbattery.com/careers/",
+          notes: "Solid-state batteries, Ford/Hyundai partnerships",
+        },
+        {
+          company: "Sila Nanotechnologies",
+          category: "Battery & Energy Storage",
+          website: "https://silanano.com/careers/",
+          notes: "Silicon nanowire anodes, next-gen materials",
+        },
+        {
+          company: "Amprius Technologies",
+          category: "Battery & Energy Storage",
+          website: "https://amprius.com/about/careers/",
+          notes: "Silicon nanowire technology, high energy density",
+        },
+        {
+          company: "StoreDot",
+          category: "Battery & Energy Storage",
+          website: "https://www.store-dot.com/careers",
+          notes: "Extreme fast charging, silicon-dominant anodes",
+        },
+        {
+          company: "Albemarle Corporation",
+          category: "Battery & Energy Storage",
+          website: "https://www.albemarle.com/careers",
+          notes: "Leading lithium producer, battery materials",
+        },
+        {
+          company: "Livent Corporation",
+          category: "Battery & Energy Storage",
+          website: "https://livent.com/careers/",
+          notes: "High-performance lithium compounds",
+        },
+        {
+          company: "Arkema Inc",
+          category: "Battery & Energy Storage",
+          website: "https://jobs.arkema.com/",
+          notes: "Your current experience! Battery binders, PVDF",
+        },
+        {
+          company: "Tesla (Powertrain)",
+          category: "Automotive & Transportation",
+          website: "https://www.tesla.com/careers",
+          notes: "Battery integration, thermal management, BMS",
+        },
+        {
+          company: "Rivian",
+          category: "Automotive & Transportation",
+          website: "https://rivian.com/careers",
+          notes: "Electric trucks, battery pack design",
+        },
+        {
+          company: "Lucid Motors",
+          category: "Automotive & Transportation",
+          website: "https://www.lucidmotors.com/careers",
+          notes: "Premium EV, 900V architecture, fast charging",
+        },
+        {
+          company: "Fisker Inc",
+          category: "Automotive & Transportation",
+          website: "https://www.fiskerinc.com/careers",
+          notes: "Ocean SUV, sustainable materials focus",
+        },
+        {
+          company: "General Motors (Ultium)",
+          category: "Automotive & Transportation",
+          website: "https://www.gm.com/careers",
+          notes: "Ultium platform, $35B EV investment",
+        },
+        {
+          company: "Ford (Lightning Division)",
+          category: "Automotive & Transportation",
+          website: "https://corporate.ford.com/careers.html",
+          notes: "F-150 Lightning, commercial EVs",
+        },
+        {
+          company: "BMW Group",
+          category: "Automotive & Transportation",
+          website: "https://www.bmwgroup.jobs/",
+          notes: "iX series, solid-state battery research",
+        },
+        {
+          company: "Mercedes-Benz Group",
+          category: "Automotive & Transportation",
+          website: "https://group.mercedes-benz.com/careers/",
+          notes: "EQS platform, luxury EV market",
+        },
+        {
+          company: "Volkswagen Group",
+          category: "Automotive & Transportation",
+          website: "https://www.volkswagen-group.com/en/careers",
+          notes: "MEB platform, massive EV rollout",
+        },
+        {
+          company: "Toyota Motor Corporation",
+          category: "Automotive & Transportation",
+          website: "https://careers.toyota.com/us/en",
+          notes: "Hybrid expertise, solid-state battery development",
+        },
+        {
+          company: "NextEra Energy",
+          category: "Energy & Utilities",
+          website: "https://jobs.nexteraenergy.com/",
+          notes: "Largest renewable energy company, grid storage",
+        },
+        {
+          company: "Brookfield Renewable",
+          category: "Energy & Utilities",
+          website: "https://brookfieldrenewableus.com/careers/",
+          notes: "Global renewable energy portfolio",
+        },
+        {
+          company: "Orsted",
+          category: "Energy & Utilities",
+          website: "https://orsted.com/en/careers",
+          notes: "Offshore wind leader, green hydrogen",
+        },
+        {
+          company: "Vestas Wind Systems",
+          category: "Energy & Utilities",
+          website: "https://www.vestas.com/en/careers",
+          notes: "Wind turbine technology, energy storage integration",
+        },
+        {
+          company: "GE Vernova",
+          category: "Energy & Utilities",
+          website: "https://www.gevernova.com/careers",
+          notes: "Grid solutions, renewable energy systems",
+        },
+        {
+          company: "First Solar",
+          category: "Energy & Utilities",
+          website: "https://www.firstsolar.com/careers",
+          notes: "Thin-film solar technology, utility-scale projects",
+        },
+        {
+          company: "Enphase Energy",
+          category: "Energy & Utilities",
+          website: "https://enphase.com/careers",
+          notes: "Microinverters, residential energy storage",
+        },
+        {
+          company: "Fluence Energy",
+          category: "Energy & Utilities",
+          website: "https://fluenceenergy.com/careers/",
+          notes: "Grid-scale energy storage, battery systems",
+        },
+        {
+          company: "Form Energy",
+          category: "Energy & Utilities",
+          website: "https://formenergy.com/careers/",
+          notes: "Iron-air batteries, long-duration storage",
+        },
+        {
+          company: "Apple (Hardware)",
+          category: "Technology & Electronics",
+          website: "https://www.apple.com/careers/us/",
+          notes: "Battery technology, wireless charging, thermal design",
+        },
+        {
+          company: "Google (Hardware)",
+          category: "Technology & Electronics",
+          website: "https://careers.google.com/",
+          notes: "Pixel devices, data center efficiency",
+        },
+        {
+          company: "Microsoft (Surface)",
+          category: "Technology & Electronics",
+          website: "https://careers.microsoft.com/",
+          notes: "Surface devices, Xbox hardware, cloud infrastructure",
+        },
+        {
+          company: "Samsung Electronics",
+          category: "Technology & Electronics",
+          website: "https://www.samsung.com/us/careers/",
+          notes: "Smartphone batteries, display technology",
+        },
+        {
+          company: "Meta (Reality Labs)",
+          category: "Technology & Electronics",
+          website: "https://www.metacareers.com/",
+          notes: "VR/AR hardware, battery optimization",
+        },
+        {
+          company: "Amazon (Lab126)",
+          category: "Technology & Electronics",
+          website: "https://www.amazon.jobs/en/",
+          notes: "Kindle, Echo devices, AWS infrastructure",
+        },
+        {
+          company: "Intel Corporation",
+          category: "Technology & Electronics",
+          website:
+            "https://www.intel.com/content/www/us/en/jobs/jobs-at-intel.html",
+          notes: "Semiconductor packaging, thermal solutions",
+        },
+        {
+          company: "NVIDIA Corporation",
+          category: "Technology & Electronics",
+          website: "https://www.nvidia.com/en-us/about-nvidia/careers/",
+          notes: "GPU power efficiency, AI hardware",
+        },
+        {
+          company: "Qualcomm",
+          category: "Technology & Electronics",
+          website: "https://www.qualcomm.com/company/careers",
+          notes: "Mobile chipsets, wireless charging technology",
+        },
+        {
+          company: "Texas Instruments",
+          category: "Technology & Electronics",
+          website: "https://careers.ti.com/",
+          notes: "Power management ICs, battery monitoring",
+        },
+        {
+          company: "SpaceX",
+          category: "Aerospace & Defense",
+          website: "https://www.spacex.com/careers/",
+          notes: "Starship batteries, satellite power systems",
+        },
+        {
+          company: "Boeing",
+          category: "Aerospace & Defense",
+          website: "https://jobs.boeing.com/",
+          notes: "787 battery systems, electric aircraft",
+        },
+        {
+          company: "Lockheed Martin",
+          category: "Aerospace & Defense",
+          website: "https://www.lockheedmartinjobs.com/",
+          notes: "Satellite power, defense energy systems",
+        },
+        {
+          company: "Northrop Grumman",
+          category: "Aerospace & Defense",
+          website: "https://www.northropgrumman.com/careers/",
+          notes: "Space systems, energy storage for defense",
+        },
+        {
+          company: "Blue Origin",
+          category: "Aerospace & Defense",
+          website: "https://www.blueorigin.com/careers/",
+          notes: "New Shepard, lunar lander power systems",
+        },
+        {
+          company: "Relativity Space",
+          category: "Aerospace & Defense",
+          website: "https://www.relativityspace.com/careers",
+          notes: "3D printed rockets, innovative manufacturing",
+        },
+        {
+          company: "Rocket Lab",
+          category: "Aerospace & Defense",
+          website: "https://www.rocketlabusa.com/careers/",
+          notes: "Electron rocket, satellite deployment",
+        },
+        {
+          company: "Dow Chemical Company",
+          category: "Chemical & Materials",
+          website: "https://corporate.dow.com/en-us/careers.html",
+          notes: "Advanced materials, battery separators",
+        },
+        {
+          company: "DuPont",
+          category: "Chemical & Materials",
+          website: "https://careers.dupont.com/",
+          notes: "Specialty materials, electronics solutions",
+        },
+        {
+          company: "BASF",
+          category: "Chemical & Materials",
+          website: "https://www.basf.com/global/en/careers.html",
+          notes: "Battery materials, cathode active materials",
+        },
+        {
+          company: "3M",
+          category: "Chemical & Materials",
+          website: "https://www.3m.com/3M/en_US/careers-us/",
+          notes: "Advanced materials, energy storage components",
+        },
+        {
+          company: "Johnson Matthey",
+          category: "Chemical & Materials",
+          website: "https://matthey.com/careers",
+          notes: "Battery materials, catalysts, recycling",
+        },
+        {
+          company: "Corning Incorporated",
+          category: "Chemical & Materials",
+          website: "https://www.corning.com/worldwide/en/careers.html",
+          notes: "Specialty glass, advanced materials",
+        },
+        {
+          company: "McKinsey & Company",
+          category: "Consulting & Research",
+          website: "https://www.mckinsey.com/careers",
+          notes: "Energy practice, battery industry analysis",
+        },
+        {
+          company: "Boston Consulting Group",
+          category: "Consulting & Research",
+          website: "https://careers.bcg.com/",
+          notes: "Climate & sustainability, energy transition",
+        },
+        {
+          company: "Bain & Company",
+          category: "Consulting & Research",
+          website: "https://www.bain.com/careers/",
+          notes: "Private equity, industrial practice",
+        },
+        {
+          company: "Deloitte",
+          category: "Consulting & Research",
+          website: "https://www2.deloitte.com/us/en/careers/students.html",
+          notes: "Energy & industrials, sustainability consulting",
+        },
+        {
+          company: "PwC",
+          category: "Consulting & Research",
+          website: "https://www.pwc.com/us/en/careers.html",
+          notes: "Energy practice, ESG advisory",
+        },
+        {
+          company: "Argonne National Laboratory",
+          category: "National Labs & Government",
+          website: "https://www.anl.gov/careers",
+          notes: "Leading battery research, ReCell Center",
+        },
+        {
+          company: "Oak Ridge National Laboratory",
+          category: "National Labs & Government",
+          website: "https://jobs.ornl.gov/",
+          notes: "Materials science, manufacturing innovation",
+        },
+        {
+          company: "NREL",
+          category: "National Labs & Government",
+          website: "https://www.nrel.gov/careers/",
+          notes: "Renewable energy, energy storage research",
+        },
+        {
+          company: "Lawrence Berkeley National Lab",
+          category: "National Labs & Government",
+          website: "https://jobs.lbl.gov/",
+          notes: "Advanced materials, battery science",
+        },
+        {
+          company: "Sandia National Laboratories",
+          category: "National Labs & Government",
+          website: "https://www.sandia.gov/careers/",
+          notes: "Grid-scale storage, materials research",
+        },
+        {
+          company: "NASA",
+          category: "National Labs & Government",
+          website: "https://www.nasa.gov/careers/",
+          notes: "Space power systems, advanced batteries",
+        },
+        {
+          company: "Commonwealth Fusion Systems",
+          category: "Startups & Emerging",
+          website: "https://cfs.energy/careers",
+          notes: "Fusion energy, superconducting magnets",
+        },
+        {
+          company: "Helion Energy",
+          category: "Startups & Emerging",
+          website: "https://www.helionenergy.com/careers/",
+          notes: "Fusion power generation, energy storage",
+        },
+        {
+          company: "Malta Inc",
+          category: "Startups & Emerging",
+          website: "https://www.maltainc.com/careers/",
+          notes: "Pumped heat energy storage, grid-scale",
+        },
+        {
+          company: "Antora Energy",
+          category: "Startups & Emerging",
+          website: "https://www.antoraenergy.com/careers",
+          notes: "Thermal batteries, industrial heat",
+        },
+        {
+          company: "Heliogen",
+          category: "Startups & Emerging",
+          website: "https://heliogen.com/careers/",
+          notes: "Concentrated solar power, AI optimization",
+        },
+        {
+          company: "Ion Storage Systems",
+          category: "Startups & Emerging",
+          website: "https://ionstoragesystems.com/careers/",
+          notes: "Solid-state batteries, ceramic electrolytes",
+        },
+        {
+          company: "Crystron Technologies",
+          category: "Startups & Emerging",
+          website: "https://crystrontechnologies.com/",
+          notes: "Your startup! LFSF cathode chemistry",
+        },
+      ];
+
+      let companies = [];
+      let charts = {};
+      let selectedCompanyId = null;
+      let expandedCategories = {};
+
+      // --- INITIALIZATION ---
+      document.addEventListener("DOMContentLoaded", () => {
+        loadData();
+        populateIndustryFilter();
+        addEventListeners();
+        updateAllUI();
+        buildModals();
+        showDetailsPlaceholder();
+      });
+
+      function loadData() {
+        const savedData = localStorage.getItem("internshipData_v4");
+        if (savedData) {
+          companies = JSON.parse(savedData);
+        } else {
+          companies = initialCompanies.map((c, index) => ({
+            id: index,
+            ...c,
+            priority: "Medium",
+            status: "Not Applied",
+            applicationDate: "",
+            interviewDate: "",
+            followupDate: "",
+            contactPerson: "",
+            contactEmail: "",
+          }));
+        }
+
+        const savedExpanded = localStorage.getItem("expandedCategories_v4");
+        if (savedExpanded) {
+          expandedCategories = JSON.parse(savedExpanded);
+        } else {
+          // Expand first category by default
+          if (companies.length > 0) {
+            const firstCategory = companies[0].category;
+            expandedCategories[firstCategory] = true;
+          }
+        }
+
+        if (companies.length > 0) {
+          selectedCompanyId = companies[0].id;
+        }
+      }
+
+      function saveData() {
+        localStorage.setItem("internshipData_v4", JSON.stringify(companies));
+        localStorage.setItem(
+          "expandedCategories_v4",
+          JSON.stringify(expandedCategories)
+        );
+        const resumeLink = document.getElementById("resumeLinkInput")?.value;
+        if (resumeLink !== undefined) {
+          localStorage.setItem("resumeLink_v4", resumeLink);
+        }
+        // Simple notification
+        const saveBtn = document.querySelector('button[onclick="saveData()"]');
+        if (saveBtn) {
+          const originalText = saveBtn.innerHTML;
+          saveBtn.innerHTML = `<i class="fas fa-check"></i> Saved!`;
+          setTimeout(() => {
+            saveBtn.innerHTML = originalText;
+          }, 2000);
+        }
+      }
+
+      function addEventListeners() {
+        document
+          .getElementById("searchInput")
+          .addEventListener("input", () => renderCompanyList());
+        document
+          .getElementById("industryFilter")
+          .addEventListener("change", () => renderCompanyList());
+      }
+
+      // --- RENDERING & UI ---
+      function updateAllUI() {
+        renderCompanyList();
+        if (
+          selectedCompanyId !== null &&
+          companies.some((c) => c.id === selectedCompanyId)
+        ) {
+          showCompanyDetails(selectedCompanyId);
+        } else {
+          if (companies.length > 0) {
+            selectCompany(companies[0].id);
+          } else {
+            showDetailsPlaceholder();
+          }
+        }
+      }
+
+      function populateIndustryFilter() {
+        const filter = document.getElementById("industryFilter");
+        const industries = [
+          ...new Set(initialCompanies.map((c) => c.category)),
+        ].sort();
+        industries.forEach((industry) => {
+          const option = document.createElement("option");
+          option.value = industry;
+          option.textContent = industry;
+          filter.appendChild(option);
+        });
+      }
+
+      function renderCompanyList() {
+        const listContainer = document.getElementById("company-list-container");
+        const searchTerm = document
+          .getElementById("searchInput")
+          .value.toLowerCase();
+        const industryFilter = document.getElementById("industryFilter").value;
+
+        const filteredCompanies = companies.filter((c) => {
+          const matchesSearch =
+            c.company.toLowerCase().includes(searchTerm) ||
+            c.category.toLowerCase().includes(searchTerm);
+          const matchesIndustry =
+            !industryFilter || c.category === industryFilter;
+          return matchesSearch && matchesIndustry;
+        });
+
+        const groupedByCat = filteredCompanies.reduce((acc, company) => {
+          (acc[company.category] = acc[company.category] || []).push(company);
+          return acc;
+        }, {});
+
+        if (Object.keys(groupedByCat).length === 0) {
+          listContainer.innerHTML = `<p class="p-4 text-center dark-text-secondary">No companies found.</p>`;
+          return;
+        }
+
+        let html = "";
+        for (const category in groupedByCat) {
+          const isExpanded = expandedCategories[category];
+          html += `
+                    <div class="py-1">
+                        <div onclick="toggleCategory('${category}')" class="flex justify-between items-center p-2 rounded-md hover:bg-white/5 cursor-pointer">
+                            <h4 class="font-bold text-sm">${category}</h4>
+                            <i class="fas fa-chevron-down text-xs dark-text-secondary transition-transform ${
+                              isExpanded ? "rotate-180" : ""
+                            }"></i>
+                        </div>
+                        <div class="accordion-content pl-2" style="max-height: ${
+                          isExpanded ? "1000px" : "0"
+                        }">
+                            ${groupedByCat[category]
+                              .map(
+                                (c) => `
+                                <div id="company-item-${
+                                  c.id
+                                }" onclick="selectCompany(${
+                                  c.id
+                                })" class="p-3 rounded-md cursor-pointer dark-hover-bg ${
+                                  c.id === selectedCompanyId
+                                    ? "dark-active-bg"
+                                    : ""
+                                }">
+                                    <div class="flex justify-between items-center">
+                                        <p class="font-semibold text-sm truncate pr-2">${
+                                          c.company
+                                        }</p>
+                                        <span class="status-badge text-xs ${getStatusClass(
+                                          c.status
+                                        )}">${c.status}</span>
+                                    </div>
+                                </div>
+                            `
+                              )
+                              .join("")}
+                        </div>
+                    </div>
+                `;
+        }
+        listContainer.innerHTML = html;
+      }
+
+      function toggleCategory(category) {
+        expandedCategories[category] = !expandedCategories[category];
+        renderCompanyList();
+      }
+
+      function selectCompany(id) {
+        selectedCompanyId = id;
+        renderCompanyList(); // Re-render to update active state
+        showCompanyDetails(id);
+      }
+
+      function showDetailsPlaceholder() {
+        document.getElementById("details-view-container").innerHTML = `
+                <div class="flex flex-col items-center justify-center h-full text-center">
+                    <i class="fas fa-clipboard-list text-5xl dark-text-secondary mb-4"></i>
+                    <h3 class="text-xl font-bold">No Company Selected</h3>
+                    <p class="dark-text-secondary mt-1">Select a company from the list to view its details.</p>
+                </div>
+            `;
+      }
+
+      function showCompanyDetails(id) {
+        const company = companies.find((c) => c.id === id);
+        if (!company) {
+          showDetailsPlaceholder();
+          return;
+        }
+
+        const container = document.getElementById("details-view-container");
+        container.innerHTML = `
+                <div class="flex justify-between items-start mb-6">
+                    <div>
+                        <h2 class="text-3xl font-bold">${company.company}</h2>
+                        <p class="dark-text-secondary mt-1">${
+                          company.category
+                        }</p>
+                    </div>
+                    <a href="${
+                      company.website
+                    }" target="_blank" class="py-2 px-5 rounded-md text-sm font-semibold text-black bg-emerald-500 hover:bg-emerald-600 transition-colors">Apply Now <i class="fas fa-external-link-alt ml-2"></i></a>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                    <div><label class="text-sm font-semibold dark-text-secondary">Priority</label><select oninput="updateCompany(${id}, 'priority', this.value)" class="mt-2 block w-full rounded-md bg-black/20 border-transparent focus:border-emerald-500 focus:ring-emerald-500">${[
+          "High",
+          "Medium",
+          "Low",
+        ]
+          .map(
+            (p) =>
+              `<option value="${p}" ${
+                company.priority === p ? "selected" : ""
+              }>${p}</option>`
+          )
+          .join("")}</select></div>
+                    <div><label class="text-sm font-semibold dark-text-secondary">Status</label><select oninput="updateCompany(${id}, 'status', this.value)" class="mt-2 block w-full rounded-md bg-black/20 border-transparent focus:border-emerald-500 focus:ring-emerald-500">${[
+          "Not Applied",
+          "Applied",
+          "Under Review",
+          "Interview",
+          "Offer",
+          "Rejected",
+        ]
+          .map(
+            (s) =>
+              `<option value="${s}" ${
+                company.status === s ? "selected" : ""
+              }>${s}</option>`
+          )
+          .join("")}</select></div>
+                    <div><label class="text-sm font-semibold dark-text-secondary">Application Date</label><input type="date" value="${
+                      company.applicationDate
+                    }" oninput="updateCompany(${id}, 'applicationDate', this.value)" class="mt-2 block w-full rounded-md bg-black/20 border-transparent focus:border-emerald-500 focus:ring-emerald-500"></div>
+                </div>
+
+                <div>
+                    <label class="text-sm font-semibold dark-text-secondary">Notes</label>
+                    <textarea oninput="updateCompany(${id}, 'notes', this.value)" class="mt-2 block w-full rounded-md bg-black/20 border-transparent focus:border-emerald-500 focus:ring-emerald-500 h-48 resize-none">${
+          company.notes
+        }</textarea>
+                </div>
+                 <div class="mt-6 flex justify-between items-center">
+                    <button onclick="deleteCompany(${id})" class="text-sm text-red-500 hover:text-red-400 flex items-center gap-2">
+                        <i class="fas fa-trash"></i>
+                        Delete Company
+                    </button>
+                    <button onclick="saveData()" class="text-sm text-emerald-400 hover:text-white flex items-center gap-2">
+                        <i class="fas fa-save"></i>
+                        Save Changes
+                    </button>
+                </div>
+            `;
+      }
+
+      function updateCompany(id, field, value) {
+        const company = companies.find((c) => c.id === id);
+        if (company) {
+          company[field] = value;
+          if (field === "status" || field === "applicationDate") {
+            renderCompanyList(); // Update badge or date in list
+          }
+        }
+      }
+
+      // --- MODALS & ANALYTICS ---
+      function buildModals() {
+        document.getElementById("addCompanyModal").innerHTML = `
+                <div class="modal-content dark-bg-secondary rounded-xl shadow-xl p-8 w-full max-w-md border dark-border-primary" onclick="event.stopPropagation()">
+                    <h2 class="text-2xl font-bold mb-6">Add New Company</h2>
+                    <form id="addCompanyForm">
+                        <div class="mb-4"><label for="newCompanyName" class="block text-sm font-medium dark-text-secondary">Company Name</label><input type="text" id="newCompanyName" required class="mt-1 block w-full rounded-md bg-black/20 border-transparent focus:border-emerald-500 focus:ring-emerald-500"></div>
+                        <div class="mb-4"><label for="newCompanyCategory" class="block text-sm font-medium dark-text-secondary">Industry</label><select id="newCompanyCategory" class="mt-1 block w-full rounded-md bg-black/20 border-transparent focus:border-emerald-500 focus:ring-emerald-500">${[
+                          ...new Set(initialCompanies.map((c) => c.category)),
+                        ]
+                          .map(
+                            (cat) => `<option value="${cat}">${cat}</option>`
+                          )
+                          .join("")}</select></div>
+                        <div class="mb-6"><label for="newCompanyWebsite" class="block text-sm font-medium dark-text-secondary">Website</label><input type="url" id="newCompanyWebsite" class="mt-1 block w-full rounded-md bg-black/20 border-transparent focus:border-emerald-500 focus:ring-emerald-500"></div>
+                        <div class="flex justify-end gap-4">
+                            <button type="button" onclick="document.getElementById('addCompanyModal').classList.add('hidden')" class="py-2 px-4 border dark-border-primary rounded-md text-sm font-medium hover:bg-white/10">Cancel</button>
+                            <button type="submit" class="py-2 px-4 rounded-md text-sm font-medium text-black bg-emerald-500 hover:bg-emerald-600">Add Company</button>
+                        </div>
+                    </form>
+                </div>`;
+        document
+          .getElementById("addCompanyForm")
+          .addEventListener("submit", (e) => {
+            e.preventDefault();
+            addNewCompany();
+          });
+      }
+
+      function addNewCompany() {
+        const newCompany = {
+          id:
+            companies.length > 0
+              ? Math.max(...companies.map((c) => c.id)) + 1
+              : 0,
+          company: document.getElementById("newCompanyName").value,
+          category: document.getElementById("newCompanyCategory").value,
+          website: document.getElementById("newCompanyWebsite").value,
+          notes: "",
+          priority: "Medium",
+          status: "Not Applied",
+          applicationDate: "",
+          interviewDate: "",
+          followupDate: "",
+          contactPerson: "",
+          contactEmail: "",
+        };
+        companies.unshift(newCompany);
+        document.getElementById("addCompanyForm").reset();
+        document.getElementById("addCompanyModal").classList.add("hidden");
+        selectCompany(newCompany.id);
+      }
+
+      function deleteCompany(id) {
+        if (
+          confirm(
+            `Are you sure you want to delete this company? This action cannot be undone.`
+          )
+        ) {
+          companies = companies.filter((c) => c.id !== id);
+          selectedCompanyId = null; // Deselect
+          updateAllUI();
+        }
+      }
+
+      function showProfileModal() {
+        const modalContainer = document.getElementById("profileModal");
+        const resumeLink = localStorage.getItem("resumeLink_v4") || "";
+        modalContainer.innerHTML = `
+                <div class="modal-content dark-bg-secondary rounded-xl shadow-xl p-8 w-full max-w-lg border dark-border-primary" onclick="event.stopPropagation()">
+                    <div class="flex items-start justify-between mb-4">
+                        <div><h2 class="text-2xl font-bold">Arnav Tiwari</h2><p class="dark-text-secondary">Chemical Engineering • Georgia Tech</p></div>
+                        <button onclick="document.getElementById('profileModal').classList.add('hidden')" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+                    </div>
+                    <h3 class="font-semibold mt-6 mb-2">Resume Link</h3>
+                    <div class="flex gap-2">
+                        <input type="url" id="resumeLinkInput" value="${resumeLink}" placeholder="https://your-resume-link..." class="flex-grow block w-full rounded-md bg-black/20 border-transparent focus:border-emerald-500 focus:ring-emerald-500">
+                        <button onclick="saveData()" class="py-2 px-4 rounded-md text-sm font-medium text-black bg-emerald-500 hover:bg-emerald-600">Save</button>
+                    </div>
+                </div>`;
+        modalContainer.classList.remove("hidden");
+      }
+
+      function showAnalyticsModal() {
+        const modalContainer = document.getElementById("analyticsModal");
+        modalContainer.innerHTML = `
+                <div class="modal-content dark-bg-secondary rounded-xl shadow-xl p-8 w-full max-w-4xl border dark-border-primary" onclick="event.stopPropagation()">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold">Analytics Dashboard</h2>
+                        <button onclick="document.getElementById('analyticsModal').classList.add('hidden')" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div><h3 class="text-lg font-semibold mb-2 text-center">Status Breakdown</h3><div class="h-64"><canvas id="statusChart"></canvas></div></div>
+                        <div><h3 class="text-lg font-semibold mb-2 text-center">Industry Breakdown</h3><div class="h-64"><canvas id="categoryChart"></canvas></div></div>
+                    </div>
+                </div>`;
+        modalContainer.classList.remove("hidden");
+        updateAllCharts();
+      }
+
+      function updateAllCharts() {
+        const textColor = "#a0a0a0";
+        const chartOptions = {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { color: textColor }, grid: { color: "#2a2a2a" } },
+            y: { ticks: { color: textColor }, grid: { color: "#2a2a2a" } },
+          },
+        };
+
+        // Status Chart
+        const statusCounts = companies.reduce((acc, c) => {
+          acc[c.status] = (acc[c.status] || 0) + 1;
+          return acc;
+        }, {});
+        createOrUpdateChart(
+          "statusChart",
+          "doughnut",
+          {
+            labels: Object.keys(statusCounts),
+            datasets: [
+              {
+                data: Object.values(statusCounts),
+                backgroundColor: Object.keys(statusCounts).map(getStatusColor),
+                borderColor: "#1a1a1a",
+                borderWidth: 4,
+              },
+            ],
+          },
+          {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: "right",
+                labels: { color: textColor, boxWidth: 12 },
+              },
+            },
+          }
+        );
+
+        // Category Chart
+        const categoryCounts = companies.reduce((acc, c) => {
+          acc[c.category] = (acc[c.category] || 0) + 1;
+          return acc;
+        }, {});
+        createOrUpdateChart(
+          "categoryChart",
+          "bar",
+          {
+            labels: Object.keys(categoryCounts),
+            datasets: [
+              {
+                label: "Companies",
+                data: Object.values(categoryCounts),
+                backgroundColor: "#68d391",
+              },
+            ],
+          },
+          chartOptions
+        );
+      }
+
+      function createOrUpdateChart(canvasId, type, data, options) {
+        const ctx = document.getElementById(canvasId)?.getContext("2d");
+        if (!ctx) return;
+        if (charts[canvasId]) charts[canvasId].destroy();
+        charts[canvasId] = new Chart(ctx, { type, data, options });
+      }
+
+      // --- UTILITIES ---
+      function getStatusClass(s) {
+        return (
+          {
+            "Not Applied": "status-not-applied",
+            Applied: "status-applied",
+            "Under Review": "status-review",
+            Interview: "status-interview",
+            Offer: "status-offer",
+            Rejected: "status-rejected",
+          }[s] || ""
+        );
+      }
+      function getStatusColor(s) {
+        return (
+          {
+            "Not Applied": "#4a5568",
+            Applied: "#4299e1",
+            "Under Review": "#f6e05e",
+            Interview: "#4fd1c5",
+            Offer: "#68d391",
+            Rejected: "#f56565",
+          }[s] || "#6b7280"
+        );
+      }
+    </script>
+  </body>
+</html>
